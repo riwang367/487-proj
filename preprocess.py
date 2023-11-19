@@ -10,7 +10,7 @@ def preprocess(test_str):
     x = re.sub("((8|:|=|;)('|`|\/\|-)*\)+)|(\(+)('|`|\/\|-)*(8|:|=|;))", "<SMILE>", x)
     x = re.sub("(8|:|=|;)('|`|\/\|-)*p+", "<LOLFACE>", x)
     x = re.sub("((8|:|=|;)('|`|\/\|-)*\(+)|(\)+)('|`|\/\|-)*(8|:|=|;))", "<SADFACE>", x)
-    x = re.sub("(8|:|=|;)('|`|\/\|-)*(\/|l*)+", "<NEUTRALLFACE>", x)
+    x = re.sub("(8|:|=|;)('|`|\/\|-)*(\/|l*)+", "<NEUTRALFACE>", x)
     x = re.sub("<3","<HEART>", x)
     x = re.sub("[-+]?[.\d]*[\d]+[:,.\d]*/", "<NUMBER>", x)
     x = re.sub("([!?.]){2,}/", repeat_sub(x), x) # Mark punctuation repeats
