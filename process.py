@@ -14,11 +14,13 @@ from tqdm import tqdm
 import nltk
 nltk.download('punkt')
 
+
 class FFNN():
     """Feed-forward neural network classifier."""
+
     def __init__(self):
         self.glove = gensim.downloader.load('glove-wiki-gigaword-200')
-    
+
     def make(self, train):
         """Make & return model."""
         # turn training set into GloVe vector set
@@ -27,7 +29,7 @@ class FFNN():
         self.cross_val(train)
         # get final classifier
         return self.clf
-    
+
     def cross_val(self, train):
         learning_rate = [1e-2, 1e-3, 1e-4]
         alpha = [1e-2, 1e-3, 1e-4]
@@ -46,7 +48,8 @@ class FFNN():
                     }
                     # X=train.cat, y=train.glove, params
                     self.fit(train['cat'], train['glove'], params)
-                    cross_val = cross_val_score(self.clf, train['cat'], train['glove'], cv=5).mean()
+                    cross_val = cross_val_score(
+                        self.clf, train['cat'], train['glove'], cv=5).mean()
                     if cross_val > mean:
                         best = params
                         mean = cross_val
@@ -70,8 +73,8 @@ class FFNN():
             hidden_layer_sizes=params["hidden_layers"],
             learning_rate_init=params["learning_rate"],
             alpha=params["alpha"]
-            ).fit(X,y)
-    
+        ).fit(X, y)
+
     def test(self, test):
         """Test model made."""
         self.get_glove(test)
@@ -80,18 +83,23 @@ class FFNN():
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
 
+
 class NB():
     """Naive Bayes classifier."""
+
     def make(self, train):
         self.vectorizer = TfidfVectorizer()
         self.clf = MultinomialNB()
-        self.clf.fit(train['cat'], self.vectorizer.fit_transform(train['text']))
+        self.clf.fit(
+            train['cat'], self.vectorizer.fit_transform(train['text']))
 
     def test(self, test):
-        prediction = self.clf.predict(self.vectorizer.fit_transform(test['text']))
+        prediction = self.clf.predict(
+            self.vectorizer.fit_transform(test['text']))
         accuracy = accuracy_score(test['cat'], prediction)
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
+
 
 def main():
     """Do things."""
@@ -110,6 +118,8 @@ def main():
     return ffnn, bayes
 
 # HELPERS
+
+
 def load_data(filename):
     random_state = 42
     data = pd.read_csv(filename)
@@ -117,6 +127,7 @@ def load_data(filename):
     [df_train, df_test] = train_test_split(
         data, train_size=0.90, test_size=0.10, random_state=random_state)
     return df_train, df_test
+
 
 if __name__ == "__main__":
     main()
