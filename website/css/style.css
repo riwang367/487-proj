@@ -1,0 +1,78 @@
+/* || GLOBAL STYLING */
+:root {
+    --bold: 800;
+    --reg: 400;
+}
+
+body {
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    margin: 1%;
+}
+
+/* || TEXT STYLING */
+h1 {
+    font-weight: var(--bold);
+    text-transform: capitalize;
+    text-align: center;
+}
+
+h2 {
+    font-weight: var(--bold);
+    text-align: center;
+}
+
+p {
+    font-weight: var(--reg);
+}
+
+.caps {
+    text-transform: uppercase;
+}
+
+.left {
+    text-align: left;
+}
+
+/* || FORM STYILNG */
+input[type=text] {
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+    font-family: 'Figtree', sans-serif;
+    font-weight: var(--reg);
+    
+}
+
+input[type=text]:focus {
+    border: 3px solid #555;
+}
+
+/* || IMAGE STYLING */
+#icon {
+    height: 100px;
+}
+
+/* || DIV STYLING */
+#quiz {
+    background-color: black;
+    color: white;
+    padding: 2%;
+    margin: auto;
+    width: 50%;
+}
+
+#result-box {
+    background-image: linear-gradient(red, deeppink, red);
+    padding: 2%;
+    margin: auto;
+    width: 50%;
+}
+
+#result {
+    background-color: white;
+    padding: 2%;
+}
+
+.spacer {
+    height: 20px;
+}

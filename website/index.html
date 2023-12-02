@@ -1,31 +1,38 @@
 <!DOCTYPE html>
-<head>
-    <link rel="stylesheet" href="style/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;800&display=swap" rel="stylesheet">
-</head>
-<body>
-    <img src="images/quiz.png" id="icon" />
-    <h1>Which fandom are you a part of?</h1>
-    <p>
-        Reddit is a text-based social media platform with a large fandom presence.
-        This quiz will tell you which fandom <span class="caps">you</span> belong to!
-    </p>
-    <div id="quiz">
+<html>
+    <head>
+        <title>EECS 487 Final Project</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="css/style.css" type="text/css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;800&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <img src="images/quiz.png" id="icon" />
+        <h1>Which fandom are you a part of?</h1>
         <p>
-            Enter a sentence in the textbox below.
+            Reddit is a text-based social media platform with a large fandom presence.
+            This quiz will tell you which fandom <span class="caps">you</span> belong to!
         </p>
-        <form action="TODO">
-            <label for="input">Input:</label>
-            <input type="text" id="input" name="input">
-            <input type="submit" value="Submit">
-        </form>
-    </div>
-    <div class="spacer"></div>
-    <div id="result">
-        <p>TODO: which subreddit</p>
-    </div>
-</body>
-    
+        <div id="quiz">
+            <h2>Enter a sentence:</h2>
+            <form action="TODO">
+                <input type="text" id="input" name="input">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="spacer"></div>
+        <div id="result-box">
+            <div id="result">
+                <h2 class="left">TODO: fandom</h2>
+                <p>
+                    TODO: write a description for each fandom
+                </p>
+                <!-- TODO: display after submit-->
+                <!-- Buzzfeed has a confetti effect on submit-->
+                <p>TODO: which subreddit</p>
+            </div>
+        </div>
+    </body>
 </html>
