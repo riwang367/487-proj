@@ -1,7 +1,7 @@
 import preprocess
 import csv
 
-'''This script outputs the processed first 1000 lines of a large file.'''
+'''This script processes our datasets.'''
 
 def main():
     todo = ["entertainment_harrypotter.csv", "entertainment_starwars.csv", "gaming_leagueoflegends.csv",
