@@ -113,9 +113,6 @@ def main():
 def load_data(filename):
     random_state = 42
     data = pd.read_csv(filename)
-    # TODO: Remove all columns except headline & category
-    print(data.iloc[1])
-    data = data.drop(axis=1, index=0)
     # Split into training & testing data
     [df_train, df_test] = train_test_split(
         data, train_size=0.90, test_size=0.10, random_state=random_state)
