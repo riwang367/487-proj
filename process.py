@@ -87,29 +87,39 @@ class FFNN():
 class NB():
     """Naive Bayes classifier."""
 
+    def enum_col(self, data):
+        array = data['enum'].to_array()
+        print(array, array.shape())
+        np.reshape(array, (-1, 1))
+        print(array, array.shape())
+        return array
+
     def make(self, train):
         self.vectorizer = TfidfVectorizer()
         self.clf = MultinomialNB()
         self.clf.fit(
-            train['cat'], self.vectorizer.fit_transform(train['text']))
+            self.enum_col(train), self.vectorizer.fit_transform(train['text']))
 
     def test(self, test):
         prediction = self.clf.predict(
             self.vectorizer.fit_transform(test['text']))
-        accuracy = accuracy_score(test['cat'], prediction)
-        f1 = f1_score(test['cat'], prediction, average='macro')
+        accuracy = accuracy_score(self.enum_col(test), prediction)
+        f1 = f1_score(self.enum_col(test), prediction, average='macro')
         return accuracy, f1
 
 
 def main():
     """Do things."""
-    train, test = load_data("datasets/final/1000.csv")
+    print("1) Prep")
+    train, test = load_data("datasets/final/debug.csv")
     # train multimodal naive bayes
+    print("2) Naive Bayes")
     bayes = NB()
     bayes.make(train)
     accuracy, f1 = bayes.test(test)
     print(f"Naive Bayes: accuracy {accuracy}, f1 {f1}")
     # train multimodal FFNN
+    print("3) FFNN")
     ffnn = FFNN()
     ffnn.make(train)
     accuracy, f1 = ffnn.test(test)
@@ -123,10 +133,31 @@ def main():
 def load_data(filename):
     random_state = 42
     data = pd.read_csv(filename)
+    data['enum'] = data['cat'].apply(get_enum)
     # Split into training & testing data
     [df_train, df_test] = train_test_split(
         data, train_size=0.90, test_size=0.10, random_state=random_state)
     return df_train, df_test
+
+
+def get_enum(cat):
+    if cat == 'harrypotter':
+        return 0
+    if cat == 'starwars':
+        return 1
+    if cat == 'leagueoflegends':
+        return 2
+    if cat == 'pokemon':
+        return 3
+    if cat == 'gameofthrones':
+        return 4
+    if cat == 'himym':
+        return 5
+    if cat == 'mylittlepony':
+        return 6
+    if cat == 'startrek':
+        return 7
+    return 8
 
 
 if __name__ == "__main__":
