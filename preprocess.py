@@ -4,7 +4,8 @@ def preprocess(test_str):
     # eyes = "[8:=;]"
     # nose = "['`\-]?"
 
-    x = re.sub("https?://\S+\b|www\.(\w+\.)+\S*/", "<URL>", test_str)
+    x = re.sub("http(s?+)", "", test_str) # Get rid of http because data has it on its own
+    x = re.sub("(www)?+\w+(com)\S*", "<URL>", x)
     x = re.sub("/", " / ", x) # Force splitting words appended with slashes (once we tokenized the URLs, of course)
     x = re.sub("u/[A-Za-z0-9_-]+", "<USER>", x) #u/(username) format on Reddit
     # :) smile: (8|:|=|;)('|`|\\|-)*)+
