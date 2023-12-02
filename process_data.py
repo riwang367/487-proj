@@ -12,20 +12,28 @@ def main():
 
     '''Concatenate first 1000 lines of each dataset'''
     print("1000")
+    with open("datasets/final/1000.csv", "w", newline='') as outfile:
+        out = csv.writer(outfile, delimiter=',')
+        out.writerow(["id", "cat", "text"])
+
     for file_name in todo:
         count = get_lines(count, 1000, file_name, "datasets/final/1000.csv")
 
     '''Concatenate first 12500 lines of each dataset'''
     print("12500")
     count = 0 # Reset line start
+    with open("datasets/final/12500.csv", "w", newline='') as outfile:
+        out = csv.writer(outfile, delimiter=',')
+        out.writerow(["id", "cat", "text"])
+
     for file_name in todo:
         count = get_lines(count, 12500, file_name, "datasets/final/fullset.csv")
 
-    '''Concatenate last 32 lines of each dataset'''
-    print("-32")
-    count = 0
-    for file_name in todo:
-        count = get_lines_from_end(count, 32, file_name, "datasets/final/eval.csv")
+    # '''Concatenate last 32 lines of each dataset'''
+    # print("-32")
+    # count = 0
+    # for file_name in todo:
+    #     count = get_lines_from_end(count, 32, file_name, "datasets/final/eval2.csv")
 
     print("Done")
     return 0
