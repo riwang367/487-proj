@@ -22,7 +22,7 @@ def main():
     '''Concatenate first 12500 lines of each dataset'''
     print("12500")
     count = 0 # Reset line start
-    with open("datasets/final/12500.csv", "w", newline='') as outfile:
+    with open("datasets/final/fullset.csv", "w", newline='') as outfile:
         out = csv.writer(outfile, delimiter=',')
         out.writerow(["id", "cat", "text"])
 
@@ -47,7 +47,7 @@ def get_lines(line_start, num_lines, input_file, output_file):
        for line in csv.reader(file):
            text = line[1]
            cat = line[3]
-           if text != "" and text != " deleted " and text != " removed ":
+           if text != "" and text != " deleted " and text != " removed " and ("this is a bot" not in text):
                 # Preprocess the data
                 text = preprocess.preprocess(text)
 
