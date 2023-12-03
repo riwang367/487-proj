@@ -35,7 +35,7 @@ class FFNN():
     def cross_val(self, train):
         learning_rate = [1e-2, 1e-3, 1e-4]
         alpha = [1e-2, 1e-3, 1e-4]
-        layers = [4]
+        layers = [4, 8]
         neurons = [528]
         best = {}
         mean = 0
@@ -48,8 +48,6 @@ class FFNN():
         y = train['cat']
         
         self.fit(X, y, best)
-        print(best)
-        return best
 
         for num in layers:
             for n in neurons:
