@@ -33,18 +33,18 @@ class FFNN():
         return self.clf
 
     def cross_val(self, train):
-        learning_rate = [1e-2, 1e-3, 1e-4]
-        alpha = [1e-2, 1e-3, 1e-4]
+        learning_rate = [1e-2, 1e-3]
+        alpha = [1e-2, 1e-3]
         layers = [4, 8]
-        neurons = [528]
+        neurons = [256, 528, 1024]
         best = {}
         mean = 0
 
-        best = {'hidden_layers': [528, 528, 528, 528], 'learning_rate': 0.01, 'alpha': 0.0001}
+        # best = {'hidden_layers': [528, 528, 528, 528], 'learning_rate': 0.01, 'alpha': 0.0001}
 
-        # self.vectorizer = TfidfVectorizer(max_df=.8, min_df=2)
-        X = train['text'].apply(self.get_glove)
-        print(X)
+        self.vectorizer = TfidfVectorizer(max_df=.8, min_df=2)
+        X = self.vectorizer.fit_transform(train['fixed'])
+        # print(X)
         y = train['cat']
         
         self.fit(X, y, best)
@@ -58,7 +58,7 @@ class FFNN():
                         "learning_rate": perm[0],
                         "alpha": perm[1]
                     }
-                    # X=train.glove, y=train.cat, params
+                    
                     self.fit(X, y, params)
                     cross_val = cross_val_score(
                         self.clf, X, y, cv=5).mean()
@@ -83,8 +83,6 @@ class FFNN():
 
     def test(self, test):
         """Test model made."""
-        # test['glove'] = test['text'].apply(self.get_glove)
-        # prediction = self.clf.predict(test['glove'])
         prediction = self.clf.predict(self.vectorizer.transform(test['fixed']))
         accuracy = accuracy_score(test['cat'], prediction)
         f1 = f1_score(test['cat'], prediction, average='macro')
