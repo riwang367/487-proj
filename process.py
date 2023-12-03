@@ -24,7 +24,9 @@ class FFNN():
     def make(self, train):
         """Make & return model."""
         # turn training set into GloVe vector set
-        train['glove'] = train['text'].apply(self.get_glove)
+        # train['glove'] = train['text'].apply(self.get_glove)
+        # train['text'] = pad_sequence(train['text'], batch_first=True)
+        
         # get hyperparameters
         self.cross_val(train)
         # get final classifier
@@ -38,9 +40,16 @@ class FFNN():
         best = {}
         mean = 0
 
+        best = {'hidden_layers': [528, 528, 528, 528], 'learning_rate': 0.01, 'alpha': 0.0001}
+
         self.vectorizer = TfidfVectorizer(max_df=.8, min_df=2)
-        X = self.vectorizer.fit_transform(train['text'])
+        X = self.vectorizer.fit_transform(train['fixed'])
+        print(X)
         y = train['cat']
+        
+        self.fit(X, y, best)
+        print(best)
+        return best
 
         for num in layers:
             for n in neurons:
@@ -87,9 +96,9 @@ class FFNN():
 
     def test(self, test):
         """Test model made."""
-        test['glove'] = test['text'].apply(self.get_glove)
+        # test['glove'] = test['text'].apply(self.get_glove)
         # prediction = self.clf.predict(test['glove'])
-        prediction = self.clf.predict(self.vectorizer.fit_transform(test['text']))
+        prediction = self.clf.predict(self.vectorizer.fit_transform(test['fixed']))
         accuracy = accuracy_score(test['cat'], prediction)
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
@@ -110,6 +119,7 @@ class NB():
             self.vectorizer.fit_transform(train['text']))
 
     def test(self, test):
+        print(self.vectorizer.fit_transform(test['text']))
         prediction = self.clf.predict(
             self.vectorizer.fit_transform(test['text']))
         accuracy = accuracy_score(test['cat'], prediction)
@@ -142,11 +152,19 @@ def main():
 def load_data(filename):
     random_state = 42
     data = pd.read_csv(filename)
+    data['fixed'] = data['text'].apply(fix_length)
     # Split into training & testing data
     [df_train, df_test] = train_test_split(
         data, train_size=0.90, test_size=0.10, random_state=random_state)
     return df_train, df_test
 
+def fix_length(line):
+    words = word_tokenize(line)
+    if len(words) > 254:
+        words = words[:254]
+    else:
+        words.extend(["_" for _ in range(254 - len(words))])
+    return " ".join(words)
 
 if __name__ == "__main__":
     main()
