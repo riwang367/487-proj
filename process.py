@@ -24,7 +24,7 @@ class FFNN():
     def make(self, train):
         """Make & return model."""
         # turn training set into GloVe vector set
-        train['glove'] = train['text'].apply(get_glove)
+        train['glove'] = train['text'].apply(self.get_glove)
         # get hyperparameters
         self.cross_val(train)
         # get final classifier
@@ -37,6 +37,11 @@ class FFNN():
         neurons = [64, 128, 256, 528]
         best = {}
         mean = 0
+
+        self.vectorizer = TfidfVectorizer(max_df=.8, min_df=2)
+        X = self.vectorizer.fit_transform(train['text'])
+        y = train['cat']
+
         for num in layers:
             for n in neurons:
                 reps = [n * num]
@@ -46,23 +51,32 @@ class FFNN():
                         "learning_rate": perm[0],
                         "alpha": perm[1]
                     }
-                    # X=train.cat, y=train.glove, params
-                    self.fit(train['cat'], train['glove'], params)
+                    # X=train.glove, y=train.cat, params
+                    # ---
+                    # self.fit(train['glove'].to_numpy(), train['cat'].to_numpy(), params)
+                    # cross_val = cross_val_score(
+                    #     self.clf, train['glove'], train['cat'], cv=5).mean()
+                    self.fit(X, y, params)
                     cross_val = cross_val_score(
-                        self.clf, train['cat'], train['glove'], cv=5).mean()
+                        self.clf, X, y, cv=5).mean()
                     if cross_val > mean:
                         best = params
                         mean = cross_val
         return best
 
-    def get_glove(line):
+    def get_glove(self, line):
         num_word = 0
-        feature = np.zeroes(1, 200)
-        for word in word_tokenize(line):
+        feature = np.zeros((1, 200))
+        for word in word_tokenize(line): # TypeError: expected string or bytes-like object, got 'DataFrame'
             if word in self.glove:
                 feature = feature + self.glove[word]
                 num_word += 1
-        feature = feature / num_word
+
+        # Avoid nan
+        if num_word == 0:
+            feature = 0
+        else:
+            feature = feature / num_word
         return feature
 
     def fit(self, X, y, params):
@@ -75,7 +89,7 @@ class FFNN():
 
     def test(self, test):
         """Test model made."""
-        self.get_glove(test)
+        test = self.get_glove(test)
         prediction = self.clf.predict(test['glove'])
         accuracy = accuracy_score(test['cat'], prediction)
         f1 = f1_score(test['cat'], prediction, average='macro')
@@ -84,6 +98,7 @@ class FFNN():
 
 class NB():
     """Naive Bayes classifier."""
+    # tokenizing?
 
     def enum_col(self, data):
         array = np.array([[e] for e in data['enum']])
@@ -93,7 +108,7 @@ class NB():
         self.vectorizer = TfidfVectorizer()
         self.clf = MultinomialNB()
         self.clf.fit(
-            self.vectorizer.fit_transform(train['text']), train['cat'])
+            self.vectorizer.fit_transform(train['text']))
 
     def test(self, test):
         prediction = self.clf.predict(
@@ -109,10 +124,10 @@ def main():
     train, test = load_data("datasets/final/debug.csv")
     # train multimodal naive bayes
     print("2) Naive Bayes")
-    bayes = NB()
-    bayes.make(train)
-    accuracy, f1 = bayes.test(test)
-    print(f"Naive Bayes: accuracy {accuracy}, f1 {f1}")
+    # bayes = NB()
+    # bayes.make(train)
+    # accuracy, f1 = bayes.test(test)
+    # print(f"Naive Bayes: accuracy {accuracy}, f1 {f1}")
     # train multimodal FFNN
     print("3) FFNN")
     ffnn = FFNN()
@@ -120,7 +135,7 @@ def main():
     accuracy, f1 = ffnn.test(test)
     print(f"FFNN: accuracy {accuracy}, f1 {f1}")
     # evaluation
-    return ffnn, bayes
+    return ffnn#, bayes
 
 # HELPERS
 
