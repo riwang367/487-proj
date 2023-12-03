@@ -23,7 +23,7 @@
             </form>
         </div>
         <div class="spacer"></div>
-        <div id="result-box">
+        <div id="result-box" class="hide">
             <div id="result">
                 <h2 class="left">TODO: fandom</h2>
                 <p>
@@ -33,6 +33,27 @@
                 <!-- Buzzfeed has a confetti effect on submit-->
                 <p>TODO: which subreddit</p>
             </div>
+        </div>
+        <!-- Reference for confetti script later
+            Needs to be called when result-box changes to display: block -->
+        <div id="confetti">
+            <script src="scripts/confetti.js"></script>
+            <script>
+                const start = () => {
+                    console.log("called start");
+                    confetti.start()
+                };
+
+                const stop = () => {
+                    console.log("called stop");
+                    setTimeout(function() {
+                        confetti.stop()
+                    }, 600); // 5000 is time that after 5 second stop the confetti ( 5000 = 5 sec)
+                };
+                
+                start();
+                stop();
+            </script>
         </div>
     </body>
 </html>
