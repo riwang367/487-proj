@@ -87,8 +87,7 @@ class FFNN():
         """Test model made."""
         # test['glove'] = test['text'].apply(self.get_glove)
         # prediction = self.clf.predict(test['glove'])
-        X = test['text'].apply(self.get_glove)
-        prediction = self.clf.predict(X)
+        prediction = self.clf.predict(self.vectorizer.transform(test['fixed']))
         accuracy = accuracy_score(test['cat'], prediction)
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
