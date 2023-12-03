@@ -33,8 +33,8 @@ class FFNN():
     def cross_val(self, train):
         learning_rate = [1e-2, 1e-3, 1e-4]
         alpha = [1e-2, 1e-3, 1e-4]
-        layers = [2, 4, 8, 16]
-        neurons = [64, 128, 256, 528]
+        layers = [4]
+        neurons = [528]
         best = {}
         mean = 0
 
@@ -44,7 +44,7 @@ class FFNN():
 
         for num in layers:
             for n in neurons:
-                reps = [n * num]
+                reps = [n for _ in range(num)]
                 for perm in itertools.product(learning_rate, alpha):
                     params = {
                         "hidden_layers": reps,
@@ -52,29 +52,27 @@ class FFNN():
                         "alpha": perm[1]
                     }
                     # X=train.glove, y=train.cat, params
-                    # ---
-                    # self.fit(train['glove'].to_numpy(), train['cat'].to_numpy(), params)
-                    # cross_val = cross_val_score(
-                    #     self.clf, train['glove'], train['cat'], cv=5).mean()
                     self.fit(X, y, params)
                     cross_val = cross_val_score(
                         self.clf, X, y, cv=5).mean()
                     if cross_val > mean:
                         best = params
                         mean = cross_val
+        print(best)
+        self.fit(X, y, best)
         return best
 
     def get_glove(self, line):
         num_word = 0
         feature = np.zeros((1, 200))
-        for word in word_tokenize(line): # TypeError: expected string or bytes-like object, got 'DataFrame'
+        for word in word_tokenize(line):
             if word in self.glove:
                 feature = feature + self.glove[word]
                 num_word += 1
 
         # Avoid nan
         if num_word == 0:
-            feature = 0
+            feature = np.zeros((1, 200))
         else:
             feature = feature / num_word
         return feature
@@ -89,8 +87,9 @@ class FFNN():
 
     def test(self, test):
         """Test model made."""
-        test = self.get_glove(test)
-        prediction = self.clf.predict(test['glove'])
+        test['glove'] = test['text'].apply(self.get_glove)
+        # prediction = self.clf.predict(test['glove'])
+        prediction = self.clf.predict(self.vectorizer.fit_transform(test['text']))
         accuracy = accuracy_score(test['cat'], prediction)
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
@@ -123,7 +122,7 @@ def main():
     print("1) Prep")
     train, test = load_data("datasets/final/debug.csv")
     # train multimodal naive bayes
-    print("2) Naive Bayes")
+    # print("2) Naive Bayes")
     # bayes = NB()
     # bayes.make(train)
     # accuracy, f1 = bayes.test(test)
