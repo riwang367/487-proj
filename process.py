@@ -42,8 +42,8 @@ class FFNN():
 
         best = {'hidden_layers': [528, 528, 528, 528], 'learning_rate': 0.01, 'alpha': 0.0001}
 
-        self.vectorizer = TfidfVectorizer(max_df=.8, min_df=2)
-        X = self.vectorizer.fit_transform(train['fixed'])
+        # self.vectorizer = TfidfVectorizer(max_df=.8, min_df=2)
+        X = train['text'].apply(self.get_glove)
         print(X)
         y = train['cat']
         
@@ -72,19 +72,8 @@ class FFNN():
         return best
 
     def get_glove(self, line):
-        num_word = 0
-        feature = np.zeros((1, 200))
-        for word in word_tokenize(line):
-            if word in self.glove:
-                feature = feature + self.glove[word]
-                num_word += 1
-
-        # Avoid nan
-        if num_word == 0:
-            feature = np.zeros((1, 200))
-        else:
-            feature = feature / num_word
-        return feature
+        words = np.array([self.glove[w] for w in word_tokenize(line)])
+        return np.mean(words, axis=0)
 
     def fit(self, X, y, params):
         """Fit to MLPClassifier."""
@@ -98,7 +87,8 @@ class FFNN():
         """Test model made."""
         # test['glove'] = test['text'].apply(self.get_glove)
         # prediction = self.clf.predict(test['glove'])
-        prediction = self.clf.predict(self.vectorizer.fit_transform(test['fixed']))
+        X = test['text'].apply(self.get_glove)
+        prediction = self.clf.predict(X)
         accuracy = accuracy_score(test['cat'], prediction)
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
@@ -152,11 +142,11 @@ def main():
 def load_data(filename):
     random_state = 42
     data = pd.read_csv(filename)
-    data['fixed'] = data['text'].apply(fix_length)
     # Split into training & testing data
     [df_train, df_test] = train_test_split(
         data, train_size=0.90, test_size=0.10, random_state=random_state)
     return df_train, df_test
+    
 
 def fix_length(line):
     words = word_tokenize(line)
