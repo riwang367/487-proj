@@ -10,6 +10,7 @@ from sklearn.metrics import f1_score, accuracy_score
 from nltk.tokenize import word_tokenize
 import gensim.downloader
 from tqdm import tqdm
+import pickle
 
 import nltk
 nltk.download('punkt')
@@ -137,11 +138,11 @@ def main():
         file.write("Best params: " + str(ffnn.best_params))
         file.write(f"FFNN: accuracy {accuracy}, f1 {f1}")
 
+    # save_clf(ffnn.clf)
+
     return ffnn#, bayes
 
 # HELPERS
-
-
 def load_data(filename):
     random_state = 42
     data = pd.read_csv(filename)
@@ -159,6 +160,10 @@ def fix_length(line):
     else:
         words.extend(["_" for _ in range(254 - len(words))])
     return " ".join(words)
+
+
+def save_clf(clf):
+    pickle.dump(clf, open(f"ffnn_clf.pkl", "wb"))
 
 if __name__ == "__main__":
     main()
