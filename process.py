@@ -115,7 +115,7 @@ class NB():
 def main():
     """Do things."""
     print("1) Prep")
-    train, test = load_data("datasets/final/debug.csv")
+    train, test = load_data("datasets/final/1000.csv") # change to dataset
     # train multimodal naive bayes
     # print("2) Naive Bayes")
     # bayes = NB()
@@ -137,6 +137,7 @@ def main():
 def load_data(filename):
     random_state = 42
     data = pd.read_csv(filename)
+    data['fixed'] = data['text'].apply(fix_length)
     # Split into training & testing data
     [df_train, df_test] = train_test_split(
         data, train_size=0.90, test_size=0.10, random_state=random_state)
