@@ -20,6 +20,7 @@ class FFNN():
 
     def __init__(self):
         self.glove = gensim.downloader.load('glove-wiki-gigaword-200')
+        self.best_params = {}
 
     def make(self, train):
         """Make & return model."""
@@ -66,6 +67,7 @@ class FFNN():
         
         print(best)
         self.fit(X, y, best)
+        self.best_params = best
         return best
 
     def get_glove(self, line):
@@ -128,6 +130,13 @@ def main():
     accuracy, f1 = ffnn.test(test)
     print(f"FFNN: accuracy {accuracy}, f1 {f1}")
     # evaluation
+
+    # write to an output file
+    with open("result.txt", "a") as file:
+        file.write("Results --------------")
+        file.write("Best params: " + str(ffnn.best_params))
+        file.write(f"FFNN: accuracy {accuracy}, f1 {f1}")
+
     return ffnn#, bayes
 
 # HELPERS
