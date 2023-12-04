@@ -27,46 +27,17 @@ def main():
             "gaming_pokemon.csv", "television_gameofthrones.csv", "television_himym.csv",
             "television_mylittlepony.csv", "television_startrek.csv"]
     todo = ['datasets/' + s for s in todo]
-    count = 0
 
-    print("800")
-    with open("datasets/final/800.csv", "w", newline='') as outfile:
-        out = csv.writer(outfile, delimiter=',')
-        out.writerow(["id", "cat", "text"])
+    # 100 posts per subreddit = 800 posts for our hyperparameters dataset
+    create_dataset(100, "datasets/final/800.csv", todo)
 
-    for file_name in todo:
-        count = get_lines(count, 100, file_name, "datasets/final/800.csv")
+    # 1000 posts per subreddit = 8000 posts
+    # create_dataset(1000, "datasets/final/1000.csv", todo)
+
+    # # 12500 posts per subreddit = 100,000 posts
+    # create_dataset(12500, "datasets/final/final.csv", todo)
 
     return
-
-    '''Concatenate first 1000 lines of each dataset'''
-    print("1000")
-    with open("datasets/final/1000.csv", "w", newline='') as outfile:
-        out = csv.writer(outfile, delimiter=',')
-        out.writerow(["id", "cat", "text"])
-
-    for file_name in todo:
-        count = get_lines(count, 1000, file_name, "datasets/final/1000.csv")
-
-    '''Concatenate first 12500 lines of each dataset'''
-    print("12500")
-    count = 0  # Reset line start
-    with open("datasets/final/fullset.csv", "w", newline='') as outfile:
-        out = csv.writer(outfile, delimiter=',')
-        out.writerow(["id", "cat", "text"])
-
-    for file_name in todo:
-        count = get_lines(count, 12500, file_name,
-                          "datasets/final/fullset.csv")
-
-    # '''Concatenate last 32 lines of each dataset'''
-    # print("-32")
-    # count = 0
-    # for file_name in todo:
-    #     count = get_lines_from_end(count, 32, file_name, "datasets/final/eval2.csv")
-
-    print("Done")
-    return 0
 
 
 def get_lines(line_start, num_lines, input_file, output_file):
@@ -125,6 +96,17 @@ def get_lines_from_end(line_start, num_lines, input_file, output_file):
 
     return count
 
+
+def create_dataset(num_lines, output_file, todo):
+    print(num_lines)
+    count = 0  # Reset line start
+    with open(output_file, "w", newline='') as outfile:
+        out = csv.writer(outfile, delimiter=',')
+        out.writerow(["id", "cat", "text"])
+
+    for file_name in todo:
+        count = get_lines(count, num_lines, file_name,
+                          output_file)
 
 if __name__ == "__main__":
     main()
