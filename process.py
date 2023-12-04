@@ -46,8 +46,6 @@ class FFNN():
         X = self.vectorizer.fit_transform(train['fixed'])
         # print(X)
         y = train['cat']
-        
-        self.fit(X, y, best)
 
         for num in layers:
             for n in neurons:
@@ -65,6 +63,7 @@ class FFNN():
                     if cross_val > mean:
                         best = params
                         mean = cross_val
+        
         print(best)
         self.fit(X, y, best)
         return best
