@@ -11,6 +11,7 @@ from nltk.tokenize import word_tokenize
 import gensim.downloader
 from tqdm import tqdm
 import pickle
+from joblib import dump, load
 
 import nltk
 nltk.download('punkt')
@@ -21,17 +22,25 @@ class FFNN():
 
     def __init__(self):
         self.glove = gensim.downloader.load('glove-wiki-gigaword-200')
-        self.best_params = {}
 
     def make(self, train):
         """Make & return model."""
         # turn training set into GloVe vector set
         # train['glove'] = train['text'].apply(self.get_glove)
         # train['text'] = pad_sequence(train['text'], batch_first=True)
-        
+
         # get hyperparameters
-        self.cross_val(train)
+        # self.cross_val(train)
+        self.vectorizer = TfidfVectorizer(max_df=.8, min_df=2)
+        X = self.vectorizer.fit_transform(train['fixed'])
+        y = train['cat']
+        self.fit(X, y, {
+            'hidden_layers': [528, 528, 528, 528],
+            'learning_rate': 0.001,
+            'alpha': 0.001
+        })
         # get final classifier
+        dump(self.clf, "ffnn.joblib")
         return self.clf
 
     def cross_val(self, train):
@@ -58,14 +67,14 @@ class FFNN():
                         "learning_rate": perm[0],
                         "alpha": perm[1]
                     }
-                    
+
                     self.fit(X, y, params)
                     cross_val = cross_val_score(
                         self.clf, X, y, cv=5).mean()
                     if cross_val > mean:
                         best = params
                         mean = cross_val
-        
+
         print(best)
         self.fit(X, y, best)
         self.best_params = best
@@ -89,6 +98,11 @@ class FFNN():
         accuracy = accuracy_score(test['cat'], prediction)
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
+
+    def predict(self, line):
+        prediction = self.clf.predict(
+            self.vectorizer.transform([fix_length(line)]))
+        return prediction
 
 
 class NB():
@@ -117,7 +131,7 @@ class NB():
 def main():
     """Do things."""
     print("1) Prep")
-    train, test = load_data("datasets/final/1000.csv") # change to dataset
+    train, test = load_data("datasets/final/1000.csv")  # change to dataset
     # train multimodal naive bayes
     # print("2) Naive Bayes")
     # bayes = NB()
@@ -127,22 +141,25 @@ def main():
     # train multimodal FFNN
     print("3) FFNN")
     ffnn = FFNN()
-    ffnn.make(train)
+    ffnn.make(train)  # saves self.clf to ffnn.joblib
     accuracy, f1 = ffnn.test(test)
     print(f"FFNN: accuracy {accuracy}, f1 {f1}")
     # evaluation
-
+    eval_dataset = load_eval("datasets/final/eval.csv")
+    accuracy, f1 = ffnn.test(eval_dataset)
+    prediction = ffnn.predict("hail to the victors")
+    print(f"Hail to the victors: {prediction}")
     # write to an output file
-    with open("result.txt", "a") as file:
-        file.write("Results --------------")
-        file.write("Best params: " + str(ffnn.best_params))
-        file.write(f"FFNN: accuracy {accuracy}, f1 {f1}")
+    # with open("result.txt", "a") as file:
+    #     file.write("Results --------------")
+    #     file.write("Best params: " + str(ffnn.best_params))
+    #     file.write(f"FFNN: accuracy {accuracy}, f1 {f1}")
 
-    # save_clf(ffnn.clf)
-
-    return ffnn#, bayes
+    return ffnn  # , bayes
 
 # HELPERS
+
+
 def load_data(filename):
     random_state = 42
     data = pd.read_csv(filename)
@@ -151,7 +168,13 @@ def load_data(filename):
     [df_train, df_test] = train_test_split(
         data, train_size=0.90, test_size=0.10, random_state=random_state)
     return df_train, df_test
-    
+
+
+def load_eval(filename):
+    data = pd.read_csv(filename)
+    data['fixed'] = data['text'].apply(fix_length)
+    return data
+
 
 def fix_length(line):
     words = word_tokenize(line)
@@ -164,6 +187,7 @@ def fix_length(line):
 
 def save_clf(clf):
     pickle.dump(clf, open(f"ffnn_clf.pkl", "wb"))
+
 
 if __name__ == "__main__":
     main()

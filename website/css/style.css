@@ -17,8 +17,11 @@ hide {
 /* || TEXT STYLING */
 h1 {
     font-weight: var(--bold);
+    font-size: 3.2rem;
     text-transform: capitalize;
     text-align: center;
+    margin-left: 1rem;
+    display: inline-block;
 }
 
 h2 {
@@ -27,6 +30,8 @@ h2 {
 }
 
 p {
+    margin-left: 5rem;
+    margin-right: 5rem;
     font-weight: var(--reg);
 }
 
@@ -44,7 +49,7 @@ input[type=text] {
     transition: 0.5s;
     font-family: 'Figtree', sans-serif;
     font-weight: var(--reg);
-    
+    width: 90%;
 }
 
 input[type=text]:focus {
@@ -54,6 +59,7 @@ input[type=text]:focus {
 /* || IMAGE STYLING */
 #icon {
     height: 100px;
+    display: inline-block;
 }
 
 /* || DIV STYLING */
@@ -62,14 +68,14 @@ input[type=text]:focus {
     color: white;
     padding: 2%;
     margin: auto;
-    width: 50%;
+    width: 80%;
 }
 
 #result-box {
     background-image: linear-gradient(red, deeppink, red);
     padding: 2%;
     margin: auto;
-    width: 50%;
+    width: 80%;
 }
 
 #result {
