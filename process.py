@@ -25,10 +25,6 @@ class FFNN():
 
     def make(self, train):
         """Make & return model."""
-        # turn training set into GloVe vector set
-        # train['glove'] = train['text'].apply(self.get_glove)
-        # train['text'] = pad_sequence(train['text'], batch_first=True)
-
         # get hyperparameters
         # self.cross_val(train)
         self.vectorizer = TfidfVectorizer(max_df=.8, min_df=2)
@@ -39,8 +35,6 @@ class FFNN():
             'learning_rate': 0.001,
             'alpha': 0.001
         })
-        # get final classifier
-        dump(self.clf, "ffnn.joblib")
         return self.clf
 
     def cross_val(self, train):
@@ -51,11 +45,8 @@ class FFNN():
         best = {}
         mean = 0
 
-        # best = {'hidden_layers': [528, 528, 528, 528], 'learning_rate': 0.01, 'alpha': 0.0001}
-
         self.vectorizer = TfidfVectorizer(max_df=.8, min_df=2)
         X = self.vectorizer.fit_transform(train['fixed'])
-        # print(X)
         y = train['cat']
 
         for num in layers:
@@ -99,10 +90,17 @@ class FFNN():
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
 
-    def predict(self, line):
+    def make_predict(self, line):
+        """Use the FFNN to predict an input."""
         prediction = self.clf.predict(
             self.vectorizer.transform([fix_length(line)]))
         return prediction
+    
+    def save_joblib(self):
+        """Save classifier and vectorizer for future use."""
+        dump(self.clf, "ffnn.joblib")
+        dump(self.vectorizer, "vectorizer.joblib")
+        
 
 
 class NB():
@@ -131,7 +129,9 @@ class NB():
 def main():
     """Do things."""
     print("1) Prep")
-    train, test = load_data("datasets/final/1000.csv")  # change to dataset
+    dataset = "datasets/final/5000.csv" # Change to correct dataset
+    train, test = load_data(dataset)
+
     # train multimodal naive bayes
     # print("2) Naive Bayes")
     # bayes = NB()
@@ -139,26 +139,33 @@ def main():
     # accuracy, f1 = bayes.test(test)
     # print(f"Naive Bayes: accuracy {accuracy}, f1 {f1}")
     # train multimodal FFNN
+
     print("3) FFNN")
     ffnn = FFNN()
-    ffnn.make(train)  # saves self.clf to ffnn.joblib
-    accuracy, f1 = ffnn.test(test)
-    print(f"FFNN: accuracy {accuracy}, f1 {f1}")
+    ffnn.make(train)
+    ffnn_accuracy, ffnn_f1 = ffnn.test(test)
+    print(f"FFNN: accuracy {ffnn_accuracy}, f1 {ffnn_f1}")
+    ffnn.save_joblib()
+    print("joblibs saved")
+
     # evaluation
+    print("4) Evaluation:")
     eval_dataset = load_eval("datasets/final/eval.csv")
-    accuracy, f1 = ffnn.test(eval_dataset)
-    prediction = ffnn.predict("hail to the victors")
+    e_accuracy, e_f1 = ffnn.test(eval_dataset)
+    prediction = ffnn.make_predict("hail to the victors")
     print(f"Hail to the victors: {prediction}")
+    
     # write to an output file
-    # with open("result.txt", "a") as file:
-    #     file.write("Results --------------")
-    #     file.write("Best params: " + str(ffnn.best_params))
-    #     file.write(f"FFNN: accuracy {accuracy}, f1 {f1}")
+    with open("result.txt", "a") as file:
+        file.write(f"Results for {dataset}--------------")
+        file.write(f"Best params: {ffnn.best_params}")
+        file.write(f"NB: accuracy TODO, f1 TODO")
+        file.write(f"FFNN: accuracy {ffnn_accuracy}, f1 {ffnn_f1}")
+        file.write(f"Eval: accuracy: {e_accuracy}, f1 {e_f1}")
 
     return ffnn  # , bayes
 
 # HELPERS
-
 
 def load_data(filename):
     random_state = 42
@@ -183,10 +190,6 @@ def fix_length(line):
     else:
         words.extend(["_" for _ in range(254 - len(words))])
     return " ".join(words)
-
-
-def save_clf(clf):
-    pickle.dump(clf, open(f"ffnn_clf.pkl", "wb"))
 
 
 if __name__ == "__main__":
