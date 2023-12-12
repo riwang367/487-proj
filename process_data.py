@@ -29,13 +29,13 @@ def main():
     todo = ['datasets/' + s for s in todo]
 
     # 100 posts per subreddit = 800 posts for our hyperparameters dataset
-    create_dataset(100, "datasets/final/800.csv", todo)
+    # create_dataset(100, "datasets/final/800.csv", todo)
 
     # 1000 posts per subreddit = 8000 posts
     # create_dataset(1000, "datasets/final/1000.csv", todo)
 
-    # # 12500 posts per subreddit = 100,000 posts
-    # create_dataset(12500, "datasets/final/final.csv", todo)
+    # 5000 posts per subreddit = 40,000 posts
+    create_dataset(5000, "datasets/final/final.csv", todo)
 
     return
 
