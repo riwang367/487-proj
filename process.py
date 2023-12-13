@@ -108,18 +108,24 @@ class NB():
     def make(self, train):
         stops = list(stopwords.words('english'))
         self.vectorizer = CountVectorizer(stop_words=stops)
-        X = self.vectorizer.fit_transform(train['text'])
+        X = self.vectorizer.fit_transform(train['fixed'])
         y = train['cat']
         self.clf = MultinomialNB()
         self.clf.fit(X, y)
 
     def test(self, test):
-        X = self.vectorizer.transform(test['text'])
+        X = self.vectorizer.transform(test['fixed'])
         y = test['cat']
         prediction = self.clf.predict(X)
-        accuracy = accuracy_score(y, X)
+        accuracy = accuracy_score(y, prediction)
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
+    
+    def make_predict(self, line):
+        """Use the NB classifier to predict an input."""
+        prediction = self.clf.predict(
+            self.vectorizer.transform([fix_length(line)]))
+        return prediction
 
     def save_joblib(self):
         """Save classifier and vectorizer for future use."""
@@ -137,13 +143,12 @@ def main():
     print("2) Naive Bayes")
     bayes = NB()
     bayes.make(train)
-    accuracy, f1 = bayes.test(test)
-    print(f"Naive Bayes: accuracy {accuracy}, f1 {f1}")
+    nb_accuracy, nb_f1 = bayes.test(test)
+    print(f"Naive Bayes: accuracy {nb_accuracy}, f1 {nb_f1}")
     bayes.save_joblib()
     print("joblibs saved")
+    
     # train multimodal FFNN
-
-    '''
     print("3) FFNN")
     ffnn = FFNN()
     ffnn.make(train)
@@ -151,22 +156,23 @@ def main():
     print(f"FFNN: accuracy {ffnn_accuracy}, f1 {ffnn_f1}")
     ffnn.save_joblib()
     print("joblibs saved")
-    '''
 
     # evaluation
     print("4) Evaluation:")
-    eval_dataset = load_eval("datasets/final/eval.csv")
-    e_accuracy, e_f1 = bayes.test(eval_dataset)
-    prediction = bayes.make_predict("hail to the victors")
-    print(f"Hail to the victors: {prediction}")
+    eval_dataset = load_eval("datasets/final/5000.csv")
+    nb_e_accuracy, nb_e_f1 = bayes.test(eval_dataset)
+    ffnn_e_accuracy, ffnn_e_f1 = ffnn.test(eval_dataset)
+    nb_prediction = bayes.make_predict("hail to the victors")
+    ffnn_prediction = ffnn.make_predict("hail to the victors")
+    print(f"Hail to the victors: NB = {nb_prediction}, FFNN = {ffnn_prediction}")
 
     # write to an output file
     with open("result.txt", "a") as file:
-        file.write(f"Results for {dataset}--------------")
-        # file.write(f"Best params: {ffnn.best_params}")
-        file.write(f"NB: accuracy {accuracy}, f1 {f1}")
-        # file.write(f"FFNN: accuracy {ffnn_accuracy}, f1 {ffnn_f1}")
-        file.write(f"Eval: accuracy: {e_accuracy}, f1 {e_f1}")
+        file.write(f"Results for {dataset}--------------\n")
+        file.write(f"NB: accuracy {nb_accuracy}, f1 {nb_f1}\n")
+        file.write(f"NB Eval: accuracy {nb_e_accuracy}, f1 {nb_e_f1}\n")
+        file.write(f"FFNN: accuracy {ffnn_accuracy}, f1 {ffnn_f1}\n")
+        file.write(f"FFNN Eval: accuracy {ffnn_e_accuracy}, f1 {ffnn_e_f1}\n\n")
 
     return
 

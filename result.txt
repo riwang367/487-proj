@@ -1,0 +1,13 @@
+Results for datasets/final/debug.csv--------------
+NB: accuracy 0.625, f1 0.4523809523809524
+Eval: accuracy: 0.1875, 
+f1 0.1762242736294296
+Results for datasets/final/debug.csv--------------
+NB: accuracy 0.625, f1 0.4523809523809524
+Eval: accuracy: 0.1875, f1 0.1762242736294296
+Results for datasets/final/debug.csv--------------
+NB: accuracy 0.625, f1 0.4523809523809524
+NB Eval: accuracy 0.1875, f1 0.1762242736294296
+FFNN: accuracy 0.375, f1 0.20833333333333331
+FFNN Eval: accuracy 0.20703125, f1 0.2209954361122861
+
