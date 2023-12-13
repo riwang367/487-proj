@@ -20,7 +20,7 @@ class Classifier():
         return prediction
     
 
-clf = Classifier("./5000_ffnn.joblib", "./5000_vectorizer.joblib")
+clf = Classifier("./1000_ffnn.joblib", "./1000_ffnn_vectorizer.joblib")
 
 @fandomclf.app.route('/', methods=['GET'])
 def show_index():
