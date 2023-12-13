@@ -7,5 +7,5 @@ set -Eeuo pipefail
 set -x
 
 export FLASK_ENV=development
-export FLASK_APP=fandomclf
+export FLASK_APP=fandomclf/index.py
 flask run --host 0.0.0.0 --port 8000

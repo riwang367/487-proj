@@ -1,12 +1,12 @@
-"""Website index page"""
-
-import fandomclf
+"""Website index page (run app in this file)"""
 import flask
 import joblib
 import os
 from nltk.tokenize import word_tokenize
 import nltk
 nltk.download('punkt')
+
+app = flask.Flask(__name__)  # pylint: disable=invalid-name
 
 class Classifier():
     def __init__(self, clf_file, vect_file):
@@ -22,19 +22,21 @@ class Classifier():
 
 clf = Classifier("./1000_ffnn.joblib", "./1000_ffnn_vectorizer.joblib")
 
-@fandomclf.app.route('/', methods=['GET'])
+@app.route('/', methods=['GET'])
 def show_index():
     context = {
         "fandom": "TODO",
         "fandom_desc": "TODO",
         "resultShowing": False
     }
+
     return flask.render_template("index.html", **context)
 
 # FIXME: route
-@fandomclf.app.route('/', methods=['POST'])
+@app.route('/', methods=['POST'])
 def show_prediction():
-    fandom = clf.make_predict(flask.session['text'])
+    flask.session['text'] = flask.request.form['text']
+    fandom = clf.make_predict(text)
     desc = ""
     if fandom == "harrypotter":
         fandom = "Harry Potter"

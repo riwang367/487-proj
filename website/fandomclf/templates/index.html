@@ -9,7 +9,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;800&display=swap" rel="stylesheet">
     </head>
     <body>
-        <img src="images/quiz.png" id="icon" />
+        <img src="static/images/quiz.png" id="icon" />
         <h1>Which fandom do you belong in?</h1>
         <p>
             Reddit is a text-based social media platform with a large fandom presence.
@@ -22,16 +22,16 @@
                 <input type="submit" value="Submit">
             </form>
         </div>
-        <div class="spacer"></div>
-        <div id="result-box" class="hide">
-            <div id="result">
-                <h2 class="left">{{ fandom }}</h2>
-                <p>
-                    {{ fandom_desc }}
-                </p>
-            </div>
-        </div>
         {% if resultShowing %}
+            <div class="spacer"></div>
+            <div id="result-box">
+                <div id="result">
+                    <h2 class="left">{{ fandom }}</h2>
+                    <p>
+                        {{ fandom_desc }}
+                    </p>
+                </div>
+            </div>
         <!-- Needs to be called when result-box changes to display: block -->
             <div id="confetti">
                 <script src="static/scripts/confetti.js"></script>
