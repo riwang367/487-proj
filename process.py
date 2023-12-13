@@ -136,7 +136,7 @@ class NB():
 def main():
     """Do things."""
     print("1) Prep")
-    dataset = "datasets/final/debug.csv"  # Change to correct dataset
+    dataset = "datasets/final/1000.csv"  # Change to correct dataset
     train, test = load_data(dataset)
 
     # train multimodal naive bayes
@@ -159,7 +159,7 @@ def main():
 
     # evaluation
     print("4) Evaluation:")
-    eval_dataset = load_eval("datasets/final/5000.csv")
+    eval_dataset = load_eval("datasets/final/eval.csv")
     nb_e_accuracy, nb_e_f1 = bayes.test(eval_dataset)
     ffnn_e_accuracy, ffnn_e_f1 = ffnn.test(eval_dataset)
     nb_prediction = bayes.make_predict("hail to the victors")
