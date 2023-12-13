@@ -1,0 +1,9 @@
+flask
+joblib
+nltk
+virtualenv
+numpy
+pandas
+scikit-learn
+gensim
+tqdm

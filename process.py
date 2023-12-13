@@ -10,8 +10,7 @@ from sklearn.metrics import f1_score, accuracy_score
 from nltk.tokenize import word_tokenize
 import gensim.downloader
 from tqdm import tqdm
-import pickle
-from joblib import dump, load
+from joblib import dump
 
 import nltk
 nltk.download('punkt')

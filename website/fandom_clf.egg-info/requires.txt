@@ -1,0 +1,11 @@
+arrow
+bs4
+Flask
+joblib
+nltk
+virtualenv
+numpy
+pandas
+scikit-learn
+gensim.downloader
+tqdm

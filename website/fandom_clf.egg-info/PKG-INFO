@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: fandom-clf
+Version: 0.1.0
+Requires-Python: >=3.10
+Requires-Dist: arrow
+Requires-Dist: bs4
+Requires-Dist: Flask
+Requires-Dist: joblib
+Requires-Dist: nltk
+Requires-Dist: virtualenv
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: scikit-learn
+Requires-Dist: gensim.downloader
+Requires-Dist: tqdm
