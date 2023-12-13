@@ -10,8 +10,14 @@ Download the following `.joblib` files from Drive and add them to the `website/f
 - [1000_ffnn.joblib](https://drive.google.com/file/d/1TKnC5EeHst9cSA37WW1KFrBdhoIpxEbf/view?usp=drive_link)
 - [1000_ffnn_vectorizer.joblib](https://drive.google.com/file/d/1-88JvU7-LTTmSPuORxyRUO5Ip9gQJH2_/view?usp=sharing)
 
+
+Update Python packages to ensure everything is up-to-date for the virtual environment:
+    sudo apt-get update
+    sudo apt-get install python3 python3-pip python3-venv python3-wheel python3-setuptools
+
+
 Change to the website directory and create a virtual environment in the website folder:
-   
+
     cd website
     python3 -m venv env
 
@@ -24,7 +30,6 @@ Activate the virtual environment and install/upgrade packages:
     source env/bin/activate
     pip install --upgrade pip setuptools wheel
     pip install -r requirements.txt
-    pip install -e .
 
 
 ## Running the app
