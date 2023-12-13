@@ -14,6 +14,7 @@ from joblib import dump
 
 import nltk
 # nltk.download('punkt')
+nltk.download('stopwords')
 
 
 class FFNN():
@@ -105,7 +106,7 @@ class NB():
     """Naive Bayes classifier."""
 
     def make(self, train):
-        stops = set(stopwords.words('english'))
+        stops = list(stopwords.words('english'))
         self.vectorizer = CountVectorizer(stop_words=stops)
         X = self.vectorizer.fit_transform(train['text'])
         y = train['cat']
