@@ -2,18 +2,18 @@ import itertools
 
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.metrics import f1_score, accuracy_score
+from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import gensim.downloader
-from tqdm import tqdm
 from joblib import dump
 
 import nltk
-nltk.download('punkt')
+# nltk.download('punkt')
 
 
 class FFNN():
@@ -94,51 +94,55 @@ class FFNN():
         prediction = self.clf.predict(
             self.vectorizer.transform([fix_length(line)]))
         return prediction
-    
+
     def save_joblib(self):
         """Save classifier and vectorizer for future use."""
         dump(self.clf, "ffnn.joblib")
         dump(self.vectorizer, "vectorizer.joblib")
-        
 
 
 class NB():
     """Naive Bayes classifier."""
-    # tokenizing?
-
-    def enum_col(self, data):
-        array = np.array([[e] for e in data['enum']])
-        return array
 
     def make(self, train):
-        self.vectorizer = TfidfVectorizer()
+        stops = set(stopwords.words('english'))
+        self.vectorizer = CountVectorizer(stop_words=stops)
+        X = self.vectorizer.fit_transform(train['text'])
+        y = train['cat']
         self.clf = MultinomialNB()
-        self.clf.fit(
-            self.vectorizer.fit_transform(train['text']))
+        self.clf.fit(X, y)
 
     def test(self, test):
-        print(self.vectorizer.fit_transform(test['text']))
-        prediction = self.clf.predict(
-            self.vectorizer.fit_transform(test['text']))
-        accuracy = accuracy_score(test['cat'], prediction)
+        X = self.vectorizer.transform(test['text'])
+        y = test['cat']
+        prediction = self.clf.predict(X)
+        accuracy = accuracy_score(y, X)
         f1 = f1_score(test['cat'], prediction, average='macro')
         return accuracy, f1
+
+    def save_joblib(self):
+        """Save classifier and vectorizer for future use."""
+        dump(self.clf, "bayes.joblib")
+        dump(self.vectorizer, "bayes_vectorizer.joblib")
 
 
 def main():
     """Do things."""
     print("1) Prep")
-    dataset = "datasets/final/5000.csv" # Change to correct dataset
+    dataset = "datasets/final/debug.csv"  # Change to correct dataset
     train, test = load_data(dataset)
 
     # train multimodal naive bayes
-    # print("2) Naive Bayes")
-    # bayes = NB()
-    # bayes.make(train)
-    # accuracy, f1 = bayes.test(test)
-    # print(f"Naive Bayes: accuracy {accuracy}, f1 {f1}")
+    print("2) Naive Bayes")
+    bayes = NB()
+    bayes.make(train)
+    accuracy, f1 = bayes.test(test)
+    print(f"Naive Bayes: accuracy {accuracy}, f1 {f1}")
+    bayes.save_joblib()
+    print("joblibs saved")
     # train multimodal FFNN
 
+    '''
     print("3) FFNN")
     ffnn = FFNN()
     ffnn.make(train)
@@ -146,25 +150,27 @@ def main():
     print(f"FFNN: accuracy {ffnn_accuracy}, f1 {ffnn_f1}")
     ffnn.save_joblib()
     print("joblibs saved")
+    '''
 
     # evaluation
     print("4) Evaluation:")
     eval_dataset = load_eval("datasets/final/eval.csv")
-    e_accuracy, e_f1 = ffnn.test(eval_dataset)
-    prediction = ffnn.make_predict("hail to the victors")
+    e_accuracy, e_f1 = bayes.test(eval_dataset)
+    prediction = bayes.make_predict("hail to the victors")
     print(f"Hail to the victors: {prediction}")
-    
+
     # write to an output file
     with open("result.txt", "a") as file:
         file.write(f"Results for {dataset}--------------")
-        file.write(f"Best params: {ffnn.best_params}")
-        file.write(f"NB: accuracy TODO, f1 TODO")
-        file.write(f"FFNN: accuracy {ffnn_accuracy}, f1 {ffnn_f1}")
+        # file.write(f"Best params: {ffnn.best_params}")
+        file.write(f"NB: accuracy {accuracy}, f1 {f1}")
+        # file.write(f"FFNN: accuracy {ffnn_accuracy}, f1 {ffnn_f1}")
         file.write(f"Eval: accuracy: {e_accuracy}, f1 {e_f1}")
 
-    return ffnn  # , bayes
+    return
 
 # HELPERS
+
 
 def load_data(filename):
     random_state = 42
