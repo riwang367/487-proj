@@ -47,8 +47,18 @@ Run the local server:
 ## Resources
 [EECS 485 Virtual Environment Setup Tutorial](https://eecs485staff.github.io/p1-insta485-static/setup_virtual_env.html)
 
-[All saved classifiers](https://drive.google.com/drive/folders/1m1KvKKQivOn3Wi9ba6jw_okkxD-lnoym?usp=sharing)
-- Feedforward neural network classifier/vectorizer trained on 40,000 posts (5000 posts per subreddit): 5000_ffnn.joblib and 5000_ffnn_vectorizer.joblib
-- Naive Bayes classifier/vectorizer trained on 5000 posts per subreddit: 5000_nb.joblib and 5000_nb_vectorizer.joblib
-- Feedforward neural network classifier/vectoriser trained on 8,000 posts (1,000 per subreddit) and used in our website: 1000_ffnn.joblib and 1000_ffnn_vectorizer.joblib 
-- Naive Bayes classifier/vectorizer trained on 8,000 posts (1,000 per subreddit): 1000_nb.joblib and 1000_nb_vectorizer.joblib
+[Drive access to all saved classifiers](https://drive.google.com/drive/folders/1m1KvKKQivOn3Wi9ba6jw_okkxD-lnoym?usp=sharing)
+- Feedforward neural network classifier/vectorizer trained on 8,000 posts (1,000 per subreddit)
+    - 1000_ffnn.joblib
+    - 1000_ffnn_vectorizer.joblib
+    - Note: This classifier was selected for the backend our final website.
+- Feedforward neural network classifier/vectorizer trained on 40,000 posts (5,000 posts per subreddit)
+    - 5000_ffnn.joblib
+    - 5000_ffnn_vectorizer.joblib
+- Naive Bayes classifier/vectorizer trained on 8,000 posts (1,000 per subreddit)
+    - 1000_nb.joblib
+    - 1000_nb_vectorizer.joblib
+- Naive Bayes classifier/vectorizer trained on 40,000 posts (5,000 posts per subreddit)
+    - 5000_nb.joblib
+    - 5000_nb_vectorizer.joblib
+
