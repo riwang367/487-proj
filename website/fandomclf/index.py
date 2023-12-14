@@ -32,11 +32,12 @@ def show_index():
 
     return flask.render_template("index.html", **context)
 
-# FIXME: route
+
 @app.route('/', methods=['POST'])
 def show_prediction():
-    flask.session['text'] = flask.request.form['text']
-    fandom = clf.make_predict(text)
+    input = flask.request.form['input']
+    print(input)
+    fandom = clf.make_predict(input)
     desc = ""
     if fandom == "harrypotter":
         fandom = "Harry Potter"
